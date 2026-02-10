@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maze Mini Game</title>
+<style>
+    body {
+        background: #222;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+    canvas {
+        background: black;
+        display: block;
+        border: 2px solid white;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="mazeCanvas"></canvas>
+
+<script>
+// Maze settings
+const rows = 15;
+const cols = 15;
+const cellSize = 30;
+
+const canvas = document.getElementById("mazeCanvas");
+canvas.width = cols * cellSize;
+canvas.height = rows * cellSize;
+const ctx = canvas.getContext("2d");
+
+// Maze cell structure
+class Cell {
+    constructor(row, col) {
+        this.row = row;
+        this.col = col;
+        this.walls = { top: true, right: true, bottom: true, left: true };
+        this.visited = false;
+    }
+
+    draw() {
+        const x = this.col * cellSize;
+        const y = this.row * cellSize;
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+
+        if (this.walls.top)    drawLine(x, y, x + cellSize, y);
+        if (this.walls.right)  drawLine(x + cellSize, y, x + cellSize, y + cellSize);
+        if (this.walls.bottom) drawLine(x + cellSize, y + cellSize, x, y + cellSize);
+        if (this.walls.left)   drawLine(x, y + cellSize, x, y);
+    }
+}
+
+function drawLine(x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+}
+
+// Create grid
+let grid = [];
+for (let r = 0; r < rows; r++) {
+    let row = [];
+    for (let c = 0; c < cols; c++) {
+        row.push(new Cell(r, c));
+    }
+    grid.push(row);
+}
+
+// Maze generation using DFS backtracking
+function generateMaze() {
+    let stack = [];
+    let current = grid[0][0];
+    current.visited = true;
+
+    while (true) {
+        let next = getUnvisitedNeighbor(current);
+        if (next) {
+            stack.push(current);
+            removeWalls(current, next);
+            next.visited = true;
+            current = next;
+        } else if (stack.length > 0) {
+            current = stack.pop();
+        } else {
+            break;
+        }
+    }
+}
+
+function getUnvisitedNeighbor(cell) {
+    let neighbors = [];
+    let { row, col } = cell;
+
+    if (row > 0 && !grid[row - 1][col].visited) neighbors.push(grid[row - 1][col]);
+    if (col < cols - 1 && !grid[row][col + 1].visited) neighbors.push(grid[row][col + 1]);
+    if (row < rows - 1 && !grid[row + 1][col].visited) neighbors.push(grid[row + 1][col]);
+    if (col > 0 && !grid[row][col - 1].visited) neighbors.push(grid[row][col - 1]);
+
+    return neighbors.length > 0 ? neighbors[Math.floor(Math.random() * neighbors.length)] : undefined;
+}
+
+function removeWalls(a, b) {
+    let dx = a.col - b.col;
+    let dy = a.row - b.row;
+
+    if (dx === 1) { a.walls.left = false; b.walls.right = false; }
+    else if (dx === -1) { a.walls.right = false; b.walls.left = false; }
+    if (dy === 1) { a.walls.top = false; b.walls.bottom = false; }
+    else if (dy === -1) { a.walls.bottom = false; b.walls.top = false; }
+}
+
+// Player
+let player = { row: 0, col: 0 };
+
+// Draw maze and player
+function drawGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            grid[r][c].draw();
+        }
+    }
+    // Draw player
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(
+        player.col * cellSize + cellSize / 2,
+        player.row * cellSize + cellSize / 2,
+        cellSize / 4,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
+
+    // Draw goal
+    ctx.fillStyle = "lime";
+    ctx.fillRect(
+        (cols - 1) * cellSize + cellSize / 4,
+        (rows - 1) * cellSize + cellSize / 4,
+        cellSize / 2,
+        cellSize / 2
+    );
+}
+
+// Move player
+function movePlayer(dx, dy) {
+    let cell = grid[player.row][player.col];
+    if (dx === -1 && !cell.walls.left) player.col--;
+    if (dx === 1 && !cell.walls.right) player.col++;
+    if (dy === -1 && !cell.walls.top) player.row--;
+    if (dy === 1 && !cell.walls.bottom) player.row++;
+
+    // Win condition
+    if (player.row === rows - 1 && player.col === cols - 1) {
+        setTimeout(() => alert("🎉 You Win!"), 50);
+    }
+    drawGame();
+}
+
+// Keyboard controls
+document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowUp") movePlayer(0, -1);
+    if (e.key === "ArrowDown") movePlayer(0, 1);
+    if (e.key === "ArrowLeft") movePlayer(-1, 0);
+    if (e.key === "ArrowRight") movePlayer(1, 0);
+});
+
+// Initialize game
+generateMaze();
+drawGame();
+</script>
+
+</body>
+</html>
