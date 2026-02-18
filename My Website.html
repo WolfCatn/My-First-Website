@@ -23,19 +23,70 @@
             padding: 20px;
         }
         </style>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
-        <style>
-            body {
-                .gradient-2 {
-                    background: linear-gradient(to right, midnightblue, #2f79b2);
-                    height: 100vh;
-                    color: white;
-                }
-            }
-        </style>
-    </head>
+
+    <!-- Cyberpunk Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: #050505;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        /* Neon glow text */
+        p {
+            font-size: 20px;
+            line-height: 1.5;
+            text-shadow: 0 0 8px #0ff, 0 0 15px #0aa;
+            margin-bottom: 30px;
+        }
+
+        /* Cyberpunk frame around iframes */
+        iframe {
+            border: 3px solid #0ff;
+            box-shadow: 
+                0 0 12px #0ff,
+                0 0 25px #0aa,
+                inset 0 0 10px #0ff;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Floating neon particles */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #0ff;
+            box-shadow: 0 0 8px #0ff;
+            border-radius: 50%;
+            animation: drift 6s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to { transform: translateY(120vh); }
+        }
+    </style>
+</head>
         </body>
         
       </head>
@@ -66,63 +117,63 @@
         <nav>
             <ul>
                 <li>
-                    <div style="width: 135px; height: 30px; 
+                    <div style="width: 155px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                     <a href="Information.html"target="_blank">_Information_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 110px; height: 30px; 
+                <div style="width: 150px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="About Me.html"target="_blank">_About Me_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 130px; height: 30px; 
+                <div style="width: 165px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="Stoner Shit.html"target="_blank">_Stoner Shit_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 130px; height: 30px; 
+                <div style="width: 170px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="Side Quests.html"target="_blank">_Side Quests_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 90px; height: 30px; 
+                <div style="width: 120px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="Tattoos.html"target="_blank">_Tattoos_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 100px; height: 30px; 
+                <div style="width: 125px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="Artwork.html"target="_blank">_Artwork_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 160px; height: 30px; 
+                <div style="width: 210px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="Dungeon Game Index.html"target="_blank">_Dungeon Game_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 140px; height: 30px; 
+                <div style="width: 160px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
                 <li><a href="Mini Game 1.html"target="_blank">_Mini Game 1_</a></li>
                 </div>
                 <h6></h6>
-                <div style="width: 140px; height: 30px; 
+                <div style="width: 165px; height: 30px; 
                     background-color: black; 
                     box-shadow: 3px 3px 5px darkgray;
                     border-radius: 10px;">
