@@ -11,57 +11,106 @@
         font-family: Arial, sans-serif;
         text-align: center;
     }
+
     canvas {
         background: #333;
         display: block;
         margin: 20px auto;
         border: 2px solid #fff;
+        touch-action: none;
+    }
+
+    /* Mobile control buttons */
+    .controls {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .btn {
+        width: 120px;
+        padding: 15px;
+        margin: 10px;
+        font-size: 20px;
+        background: #444;
+        color: white;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        user-select: none;
+    }
+
+    /* Show buttons only on mobile */
+    @media (max-width: 700px) {
+        .controls {
+            display: block;
+        }
     }
 </style>
 </head>
 <body>
+
 <h1>Catch the Ball</h1>
-<p>Use Left/Right Arrow Keys to Move</p>
-<canvas id="gameCanvas" width="400" height="500"></canvas>
+<p>Use Arrow Keys or Touch Controls</p>
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- Mobile Buttons -->
+<div class="controls">
+    <button class="btn" id="leftBtn">◀ Left</button>
+    <button class="btn" id="rightBtn">Right ▶</button>
+</div>
 
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Paddle properties
-const paddleWidth = 80;
-const paddleHeight = 10;
-let paddleX = (canvas.width - paddleWidth) / 2;
-const paddleSpeed = 6;
+/* ===== Responsive Canvas ===== */
+function resizeCanvas() {
+    const maxWidth = Math.min(window.innerWidth * 0.9, 500);
+    const maxHeight = maxWidth * 1.25;
 
-// Ball properties
-let ballRadius = 10;
+    canvas.width = maxWidth;
+    canvas.height = maxHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+/* ===== Paddle ===== */
+let paddleWidth = canvas.width * 0.25;
+let paddleHeight = 12;
+let paddleX = (canvas.width - paddleWidth) / 2;
+let paddleSpeed = canvas.width * 0.02;
+
+/* ===== Ball ===== */
+let ballRadius = canvas.width * 0.04;
 let ballX = Math.random() * (canvas.width - ballRadius * 2) + ballRadius;
 let ballY = 0;
-let ballSpeed = 3;
+let ballSpeed = canvas.height * 0.008;
 
-// Score
+/* ===== Score ===== */
 let score = 0;
 
-// Key press tracking
+/* ===== Input Tracking ===== */
 let rightPressed = false;
 let leftPressed = false;
 
-// Event listeners
-document.addEventListener("keydown", keyDownHandler);
-document.addEventListener("keyup", keyUpHandler);
+/* Keyboard Controls */
+document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") rightPressed = true;
+    if (e.key === "ArrowLeft") leftPressed = true;
+});
+document.addEventListener("keyup", e => {
+    if (e.key === "ArrowRight") rightPressed = false;
+    if (e.key === "ArrowLeft") leftPressed = false;
+});
 
-function keyDownHandler(e) {
-    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
-    else if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
-}
+/* Mobile Touch Controls */
+document.getElementById("leftBtn").addEventListener("touchstart", () => leftPressed = true);
+document.getElementById("leftBtn").addEventListener("touchend", () => leftPressed = false);
 
-function keyUpHandler(e) {
-    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
-    else if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
-}
+document.getElementById("rightBtn").addEventListener("touchstart", () => rightPressed = true);
+document.getElementById("rightBtn").addEventListener("touchend", () => rightPressed = false);
 
-// Draw paddle
+/* ===== Drawing Functions ===== */
 function drawPaddle() {
     ctx.beginPath();
     ctx.rect(paddleX, canvas.height - paddleHeight - 10, paddleWidth, paddleHeight);
@@ -70,7 +119,6 @@ function drawPaddle() {
     ctx.closePath();
 }
 
-// Draw ball
 function drawBall() {
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
@@ -79,14 +127,13 @@ function drawBall() {
     ctx.closePath();
 }
 
-// Draw score
 function drawScore() {
-    ctx.font = "16px Arial";
+    ctx.font = "18px Arial";
     ctx.fillStyle = "#fff";
-    ctx.fillText("Score: " + score, 8, 20);
+    ctx.fillText("Score: " + score, 10, 25);
 }
 
-// Update game state
+/* ===== Game Loop ===== */
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -94,14 +141,14 @@ function update() {
     drawBall();
     drawScore();
 
-    // Move paddle
+    /* Paddle Movement */
     if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += paddleSpeed;
     if (leftPressed && paddleX > 0) paddleX -= paddleSpeed;
 
-    // Move ball
+    /* Ball Movement */
     ballY += ballSpeed;
 
-    // Check if ball hits paddle
+    /* Ball Hits Paddle */
     if (
         ballY + ballRadius >= canvas.height - paddleHeight - 10 &&
         ballX > paddleX &&
@@ -111,7 +158,7 @@ function update() {
         resetBall();
     }
 
-    // Missed ball
+    /* Missed Ball */
     if (ballY - ballRadius > canvas.height) {
         alert("Game Over! Final Score: " + score);
         document.location.reload();
@@ -120,7 +167,6 @@ function update() {
     requestAnimationFrame(update);
 }
 
-// Reset ball position
 function resetBall() {
     ballX = Math.random() * (canvas.width - ballRadius * 2) + ballRadius;
     ballY = 0;
@@ -128,5 +174,6 @@ function resetBall() {
 
 update();
 </script>
+
 </body>
 </html>
