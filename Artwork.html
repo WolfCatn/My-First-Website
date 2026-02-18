@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Artwork</title>
+
+    <!-- Cyberpunk Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: #050505;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        /* Neon glow text */
+        p {
+            font-size: 20px;
+            line-height: 1.5;
+            text-shadow: 0 0 8px #0ff, 0 0 15px #0aa;
+            margin-bottom: 30px;
+        }
+
+        /* Cyberpunk frame around iframes */
+        iframe {
+            border: 3px solid #0ff;
+            box-shadow: 
+                0 0 12px #0ff,
+                0 0 25px #0aa,
+                inset 0 0 10px #0ff;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        /* Animated scanlines overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 255, 255, 0.03) 0px,
+                rgba(0, 255, 255, 0.03) 2px,
+                transparent 3px,
+                transparent 4px
+            );
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Floating neon particles */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #0ff;
+            box-shadow: 0 0 8px #0ff;
+            border-radius: 50%;
+            animation: drift 6s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to { transform: translateY(120vh); }
+        }
+    </style>
+</head>
+
+<body>
+
+<p>I create art across many styles — sketches, painting, digital art, and more.</p>
+
+<iframe src="https://assets.pinterest.com/ext/embed.html?id=1135399756074767283"
+    height="449"
+    width="345"
+    frameborder="0"
+    scrolling="no">
+</iframe>
+
+<p>This was one of my earliest digital works.</p>
+
+<iframe src="https://assets.pinterest.com/ext/embed.html?id=1135399756080426409"
+    height="296"
+    width="345"
+    frameborder="0"
+    scrolling="no">
+</iframe>
+
+<p>I created this one specifically for my sister. Love you sis!</p>
+
+<iframe src="https://assets.pinterest.com/ext/embed.html?id=1135399756080426947"
+    height="437"
+    width="345"
+    frameborder="0"
+    scrolling="no">
+</iframe>
+
+<!-- Neon particles -->
+<div class="particles">
+    <script>
+        for (let i = 0; i < 40; i++) {
+            const p = document.createElement("div");
+            p.className = "particle";
+            p.style.left = Math.random() * 100 + "vw";
+            p.style.top = Math.random() * -100 + "vh";
+            p.style.animationDuration = 4 + Math.random() * 6 + "s";
+            document.querySelector(".particles").appendChild(p);
+        }
+    </script>
+</div>
+
+</body>
+</html>
