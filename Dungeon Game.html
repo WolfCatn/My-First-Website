@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dungeon Quest RPG</title>
+<style>
+    body {
+        background: #111;
+        color: #eee;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    #game {
+        max-width: 600px;
+        margin: auto;
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid #444;
+    }
+    button {
+        margin: 5px;
+        padding: 10px 15px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #666;
+    }
+    #log {
+        white-space: pre-line;
+        background: #000;
+        padding: 10px;
+        border-radius: 5px;
+        height: 200px;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div id="game">
+    <h2>Dungeon Quest RPG</h2>
+    <div id="roomName"></div>
+    <div id="roomDesc"></div>
+    <div id="status"></div>
+
+    <div id="actions">
+        <button onclick="move()">Move</button>
+        <button onclick="inspect()">Inspect</button>
+        <button onclick="fight()">Fight</button>
+        <button onclick="loot()">Loot</button>
+    </div>
+
+    <div id="log"></div>
+</div>
+
+<script>
+// ------------------ GAME DATA ------------------
+
+class Player {
+    constructor() {
+        this.hp = 30;
+        this.attack = 6;
+        this.level = 1;
+        this.xp = 0;
+        this.nextLevel = 20;
+        this.treasure = null;
+    }
+
+    gainXP(amount) {
+        this.xp += amount;
+        log(`You gained ${amount} XP.`);
+
+        if (this.xp >= this.nextLevel) {
+            this.level++;
+            this.xp -= this.nextLevel;
+            this.nextLevel = Math.floor(this.nextLevel * 1.5);
+            this.hp += 10;
+            this.attack += 2;
+            log(`*** LEVEL UP! You are now level ${this.level}! ***`);
+        }
+    }
+}
+
+class Enemy {
+    constructor(name, hp, attack, xp) {
+        this.name = name;
+        this.hp = hp;
+        this.attack = attack;
+        this.xp = xp;
+    }
+}
+
+class Treasure {
+    constructor(name, desc) {
+        this.name = name;
+        this.desc = desc;
+    }
+}
+
+class Room {
+    constructor(name, desc) {
+        this.name = name;
+        this.desc = desc;
+        this.neighbors = {};
+        this.enemies = [];
+        this.treasures = [];
+        this.isExit = false;
+    }
+}
+
+// ------------------ GAME SETUP ------------------
+
+const player = new Player();
+let currentRoom;
+
+// Rooms
+const entrance = new Room("Entrance", "A shadow‑drenched stone chamber where each drip of water echoes like a warning from the unseen depths.");
+const hall = new Room("Hall", "A long corridor swallowed by dust and silence, as though untouched for centuries.");
+const armory = new Room("Armory", "A forgotten armory littered with rusted weapons, each one humming faintly with the memory of old battles.");
+const lair = new Room("Boss Lair", "A vast chamber steeped in a chilling aura, the air thick with a presence.");
+const exitRoom = new Room("Exit", "A cracked staircase spiraling upward, glowing faintly as if guiding only the worthy toward freedom.");
+exitRoom.isExit = true;
+
+// NEW ROOMS
+const crypt = new Room("Crypt", "Ancient coffins line the walls.");
+const pit = new Room("Dark Pit", "You hear distant growling below.");
+const shrine = new Room("Forgotten Shrine", "A faint glow illuminates runes.");
+
+// connections
+entrance.neighbors = { north: hall };
+hall.neighbors = { south: entrance, east: armory, north: lair, west: crypt };
+armory.neighbors = { west: hall, north: shrine };
+lair.neighbors = { south: hall, east: exitRoom, west: pit };
+exitRoom.neighbors = { west: lair };
+crypt.neighbors = { east: hall };
+pit.neighbors = { east: lair };
+shrine.neighbors = { south: armory };
+
+// enemies
+hall.enemies.push(new Enemy("Skeleton", 10, 3, 10));
+lair.enemies.push(new Enemy("Dungeon Boss", 20, 5, 25));
+crypt.enemies.push(new Enemy("Ghoul", 12, 4, 12));
+pit.enemies.push(new Enemy("Shadow Beast", 15, 5, 15));
+
+// treasure
+armory.treasures.push(new Treasure("Ancient Relic", "A glowing relic of unknown power."));
+shrine.treasures.push(new Treasure("Blessed Idol", "A holy artifact radiating warmth."));
+
+currentRoom = entrance;
+
+// ------------------ UI HELPERS ------------------
+
+function log(text) {
+    const box = document.getElementById("log");
+    box.textContent += text + "\n";
+    box.scrollTop = box.scrollHeight;
+}
+
+function updateUI() {
+    document.getElementById("roomName").textContent = "Room: " + currentRoom.name;
+    document.getElementById("roomDesc").textContent = currentRoom.desc;
+
+    document.getElementById("status").textContent =
+        `HP: ${player.hp} | ATK: ${player.attack} | LVL: ${player.level} | XP: ${player.xp}/${player.nextLevel} | Treasure: ${player.treasure ? player.treasure.name : "None"}`;
+}
+
+// ------------------ RANDOM ENCOUNTERS ------------------
+
+function randomEncounter() {
+    if (Math.random() < 0.25) {
+        const e = new Enemy("Wandering Spirit", 8, 3, 8);
+        currentRoom.enemies.push(e);
+        log("A wandering spirit appears!");
+    }
+}
+
+// ------------------ ACTIONS ------------------
+
+function move() {
+    const dirs = Object.keys(currentRoom.neighbors);
+    const actionBox = document.getElementById("actions");
+
+    actionBox.innerHTML = "";
+
+    dirs.forEach(dir => {
+        const btn = document.createElement("button");
+        btn.textContent = "Go " + dir;
+        btn.onclick = () => {
+            currentRoom = currentRoom.neighbors[dir];
+            log("You move " + dir + " into the " + currentRoom.name + ".");
+            randomEncounter();
+            updateUI();
+            restoreMainButtons();
+
+            if (currentRoom.isExit && player.treasure && currentRoom.enemies.length === 0) {
+                log("You escape the depths of the dungeon with the relic… though something in the darkness stirs, as if your victory has awakened it. Not to worry, you escaped and are safe now.");
+                disableButtons();
+            }
+        };
+        actionBox.appendChild(btn);
+    });
+
+    const cancel = document.createElement("button");
+    cancel.textContent = "Cancel";
+    cancel.onclick = restoreMainButtons;
+    actionBox.appendChild(cancel);
+}
+
+function restoreMainButtons() {
+    const actionBox = document.getElementById("actions");
+    actionBox.innerHTML = `
+        <button onclick="move()">Move</button>
+        <button onclick="inspect()">Inspect</button>
+        <button onclick="fight()">Fight</button>
+        <button onclick="loot()">Loot</button>
+    `;
+}
+
+function inspect() {
+    if (currentRoom.enemies.length > 0) {
+        log("You spot enemies here:");
+        currentRoom.enemies.forEach(e => log(`- ${e.name} (HP: ${e.hp})`));
+    } else {
+        log("No hostile presence is detected.");
+    }
+
+    if (currentRoom.treasures.length > 0 && !player.treasure) {
+        log("Your eyes catch the faint, soft glow of the treasure:");
+        currentRoom.treasures.forEach(t => log(`- ${t.name}: ${t.desc}`));
+    } else if (currentRoom.treasures.length > 0) {
+        log("You see treasure, but you're already carrying one.");
+    } else {
+        log("No treasure here.");
+    }
+}
+
+function fight() {
+    if (currentRoom.enemies.length === 0) {
+        log("There are no enemies to fight.");
+        return;
+    }
+
+    const enemy = currentRoom.enemies[0];
+    log("You attack the " + enemy.name + "!");
+
+    const dmg = player.attack + Math.floor(Math.random() * 3);
+    enemy.hp -= dmg;
+    log("You deal " + dmg + " damage.");
+
+    if (enemy.hp <= 0) {
+        log("You defeated the " + enemy.name + "!");
+        player.gainXP(enemy.xp);
+        currentRoom.enemies.shift();
+        updateUI();
+        return;
+    }
+
+    const enemyDmg = enemy.attack + Math.floor(Math.random() * 3);
+    player.hp -= enemyDmg;
+    log("The " + enemy.name + " hits you for " + enemyDmg + " damage!");
+
+    if (player.hp <= 0) {
+        log("Your strength fades, swallowed by the dungeon’s darkness. Your journey ends here.");
+        disableButtons();
+    }
+
+    updateUI();
+}
+
+function loot() {
+    if (currentRoom.treasures.length === 0) {
+        log("Nothing to loot here.");
+        return;
+    }
+
+    if (player.treasure) {
+        log("You realize you already have an item and can't carry any more out of the dungeon.");
+        return;
+    }
+
+    const treasure = currentRoom.treasures.shift();
+    player.treasure = treasure;
+    log("You pick up the " + treasure.name + ".");
+
+    updateUI();
+}
+
+function disableButtons() {
+    document.querySelectorAll("button").forEach(btn => btn.disabled = true);
+}
+
+// ------------------ START ------------------
+
+updateUI();
+log("A small breeze rushes past you as you step into the darkness, as though the dungeon itself has awakened.");
+
+</script>
+
+</body>
+</html>

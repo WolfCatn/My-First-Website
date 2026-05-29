@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dark Fantasy Dungeon</title>
+<style>
+    body {
+        background: #000;
+        color: #ccc;
+        font-family: Georgia, serif;
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+    }
+    canvas {
+        border: 3px solid #333;
+        border-radius: 10px;
+        background: #111;
+        box-shadow: 0 0 25px #000 inset;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+
+<script>
+// ------------------ CANVAS SETUP ------------------
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// ------------------ PLAYER ------------------
+
+const player = {
+    x: 60,   // safe floor tile
+    y: 60,
+    width: 28,
+    height: 28,
+    speed: 2.4
+};
+
+// ------------------ INPUT (FULLY FIXED) ------------------
+
+const keys = {};
+
+window.addEventListener("keydown", e => {
+    keys[e.code] = true;   // use e.code instead of e.key
+});
+
+window.addEventListener("keyup", e => {
+    keys[e.code] = false;
+});
+
+// Supported keys:
+// "KeyW", "KeyA", "KeyS", "KeyD"
+// "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"
+
+// ------------------ MAP ------------------
+
+const tileSize = 40;
+
+const map = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
+    [1,0,1,1,1,0,0,1,0,1,1,1,1,0,1],
+    [1,0,0,0,1,0,0,0,0,1,0,0,1,0,1],
+    [1,0,1,0,1,1,1,1,0,1,0,1,1,0,1],
+    [1,0,1,0,0,0,0,1,0,0,0,1,0,0,1],
+    [1,0,1,1,1,1,0,1,1,1,0,1,0,1,1],
+    [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
+    [1,1,1,1,0,1,1,1,0,1,1,1,1,0,1],
+    [1,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
+    [1,0,0,0,0,1,0,1,0,1,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+// ------------------ ENEMY ------------------
+
+const enemy = {
+    x: 400,
+    y: 200,
+    width: 32,
+    height: 32,
+    alive: true
+};
+
+// ------------------ TREASURE ------------------
+
+const treasure = {
+    x: 500,
+    y: 80,
+    width: 26,
+    height: 26,
+    collected: false
+};
+
+// ------------------ COLLISION ------------------
+
+function isWall(x, y) {
+    const col = Math.floor(x / tileSize);
+    const row = Math.floor(y / tileSize);
+    return map[row] && map[row][col] === 1;
+}
+
+function movePlayer() {
+    let newX = player.x;
+    let newY = player.y;
+
+    // FIXED: using e.code makes movement universal
+    if (keys["KeyW"] || keys["ArrowUp"]) newY -= player.speed;
+    if (keys["KeyS"] || keys["ArrowDown"]) newY += player.speed;
+    if (keys["KeyA"] || keys["ArrowLeft"]) newX -= player.speed;
+    if (keys["KeyD"] || keys["ArrowRight"]) newX += player.speed;
+
+    const corners = [
+        [newX, newY],
+        [newX + player.width, newY],
+        [newX, newY + player.height],
+        [newX + player.width, newY + player.height]
+    ];
+
+    if (!corners.some(c => isWall(c[0], c[1]))) {
+        player.x = newX;
+        player.y = newY;
+    }
+}
+
+// ------------------ INTERACTION ------------------
+
+function checkTreasure() {
+    if (treasure.collected) return;
+
+    if (player.x < treasure.x + treasure.width &&
+        player.x + player.width > treasure.x &&
+        player.y < treasure.y + treasure.height &&
+        player.y + player.height > treasure.y) {
+
+        treasure.collected = true;
+        alert("You claimed the cursed relic. It hums with ancient power.");
+    }
+}
+
+function checkEnemy() {
+    if (!enemy.alive) return;
+
+    if (player.x < enemy.x + enemy.width &&
+        player.x + player.width > enemy.x &&
+        player.y < enemy.y + enemy.height &&
+        player.y + player.height > enemy.y) {
+
+        enemy.alive = false;
+        alert("The shadow demon dissolves into smoke. You are victorious.");
+    }
+}
+
+// ------------------ DRAWING ------------------
+
+function drawMap() {
+    for (let r = 0; r < map.length; r++) {
+        for (let c = 0; c < map[r].length; c++) {
+            if (map[r][c] === 1) {
+                const grad = ctx.createLinearGradient(0, 0, 40, 40);
+                grad.addColorStop(0, "#1a1a1a");
+                grad.addColorStop(1, "#0d0d0d");
+                ctx.fillStyle = grad;
+            } else {
+                const grad = ctx.createRadialGradient(
+                    c * tileSize + 20, r * tileSize + 20, 5,
+                    c * tileSize + 20, r * tileSize + 20, 40
+                );
+                grad.addColorStop(0, "#222");
+                grad.addColorStop(1, "#111");
+                ctx.fillStyle = grad;
+            }
+            ctx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+        }
+    }
+}
+
+function drawPlayer() {
+    const glow = ctx.createRadialGradient(
+        player.x + 14, player.y + 14, 2,
+        player.x + 14, player.y + 14, 20
+    );
+    glow.addColorStop(0, "rgba(80,150,255,1)");
+    glow.addColorStop(1, "rgba(80,150,255,0)");
+
+    ctx.fillStyle = glow;
+    ctx.fillRect(player.x - 10, player.y - 10, 48, 48);
+
+    ctx.fillStyle = "#4af";
+    ctx.beginPath();
+    ctx.arc(player.x + 14, player.y + 14, 14, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawEnemy() {
+    if (!enemy.alive) return;
+
+    const grad = ctx.createRadialGradient(
+        enemy.x + 16, enemy.y + 16, 2,
+        enemy.x + 16, enemy.y + 16, 20
+    );
+    grad.addColorStop(0, "rgba(255,50,50,1)");
+    grad.addColorStop(1, "rgba(255,50,50,0)");
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(enemy.x - 10, enemy.y - 10, 52, 52);
+
+    ctx.fillStyle = "#300";
+    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+
+    ctx.fillStyle = "#f33";
+    ctx.fillRect(enemy.x + 6, enemy.y + 8, 6, 6);
+    ctx.fillRect(enemy.x + 20, enemy.y + 8, 6, 6);
+}
+
+function drawTreasure() {
+    if (treasure.collected) return;
+
+    const pulse = Math.sin(Date.now() / 200) * 0.5 + 0.5;
+
+    const grad = ctx.createRadialGradient(
+        treasure.x + 13, treasure.y + 13, 2,
+        treasure.x + 13, treasure.y + 13, 20
+    );
+    grad.addColorStop(0, `rgba(255,255,100,${0.8 + pulse * 0.2})`);
+    grad.addColorStop(1, "rgba(255,255,100,0)");
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(treasure.x - 10, treasure.y - 10, 48, 48);
+
+    ctx.fillStyle = "#ff0";
+    ctx.fillRect(treasure.x, treasure.y, treasure.width, treasure.height);
+}
+
+// ------------------ GAME LOOP ------------------
+
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawMap();
+    movePlayer();
+    drawPlayer();
+    drawEnemy();
+    drawTreasure();
+
+    checkTreasure();
+    checkEnemy();
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+</script>
+
+</body>
+</html>

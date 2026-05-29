@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+
+    <!-- Cyberpunk Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== GLOBAL CYBERPUNK STYLE ===== */
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: #020202;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        /* Neon glow text */
+        p, li, a, h1, h2, h3 {
+            text-shadow: 0 0 8px #0ff, 0 0 15px #0aa;
+        }
+
+        a {
+            color: #0ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* ===== HOLOGRAM HEADER (GLITCH + FLICKER) ===== */
+        header h1 {
+            font-size: 40px;
+            margin: 0;
+            padding: 15px;
+            border: 3px solid #0ff;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            display: inline-block;
+            position: relative;
+            animation: holo-flicker 3s infinite, neon-border 4s linear infinite;
+        }
+
+        /* Hologram flicker */
+        @keyframes holo-flicker {
+            0%, 100% { opacity: 1; }
+            10% { opacity: 0.6; }
+            12% { opacity: 1; }
+            20% { opacity: 0.4; }
+            22% { opacity: 1; }
+            30% { opacity: 0.7; }
+            32% { opacity: 1; }
+            70% { opacity: 0.9; }
+        }
+
+        /* RGB glitch layers */
+        header h1::before,
+        header h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        header h1::before {
+            color: #f0f;
+            transform: translate(2px, 0);
+            animation: glitch 1.8s infinite;
+        }
+
+        header h1::after {
+            color: #0ff;
+            transform: translate(-2px, 0);
+            animation: glitch 2.2s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); opacity: 0.4; }
+            20% { transform: translate(-3px, 2px); opacity: 0.7; }
+            40% { transform: translate(3px, -2px); opacity: 0.5; }
+            60% { transform: translate(-2px, 1px); opacity: 0.8; }
+            80% { transform: translate(2px, -1px); opacity: 0.6; }
+            100% { transform: translate(0); opacity: 0.4; }
+        }
+
+        /* ===== ANIMATED NEON BORDERS ===== */
+        @keyframes neon-border {
+            0% { box-shadow: 0 0 10px #0ff, inset 0 0 10px #0aa; border-color: #0ff; }
+            50% { box-shadow: 0 0 20px #f0f, inset 0 0 15px #a0a; border-color: #f0f; }
+            100% { box-shadow: 0 0 10px #0ff, inset 0 0 10px #0aa; border-color: #0ff; }
+        }
+
+        .glow-panel {
+            border: 3px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.35);
+            animation: neon-border 4s linear infinite;
+        }
+
+        /* ===== GRID LAYOUT ===== */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .grid-container > div {
+            padding: 20px;
+            border-radius: 10px;
+            animation: neon-border 4s linear infinite;
+        }
+
+        /* ===== NAV BUTTONS (GLITCH + NEON) ===== */
+        .nav-btn {
+            display: inline-block;
+            width: 200px;
+            padding: 10px;
+            background: black;
+            border-radius: 10px;
+            border: 2px solid #0ff;
+            animation: neon-border 4s linear infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Glitch effect on hover */
+        .nav-btn:hover::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            color: #f0f;
+            text-shadow: 2px 0 #f0f;
+            animation: glitch 0.4s infinite;
+        }
+
+        /* ===== ASIDE ===== */
+        aside {
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            animation: neon-border 4s linear infinite;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        /* ===== SCANLINE OVERLAY ===== */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 255, 255, 0.03) 0px,
+                rgba(0, 255, 255, 0.03) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== GLITCH INTRO SCREEN ===== -->
+<div id="glitch-intro">
+    <div class="glitch-text" data-text="INITIALIZING...">INITIALIZING...</div>
+    <div class="glitch-text small" data-text="BOOTING SYSTEM">BOOTING SYSTEM</div>
+    <div class="glitch-scan"></div>
+</div>
+
+<style>
+    /* Fullscreen overlay */
+    #glitch-intro {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: black;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        overflow: hidden;
+        animation: intro-fadeout 4.5s forwards;
+    }
+
+    /* Glitch text */
+    .glitch-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 48px;
+        color: #0ff;
+        text-shadow: 0 0 10px #0ff;
+        position: relative;
+        margin: 10px 0;
+        animation: glitch-anim 1.5s infinite;
+    }
+
+    .glitch-text.small {
+        font-size: 22px;
+        opacity: 0.8;
+        animation: glitch-anim 2s infinite;
+    }
+
+    /* RGB glitch layers */
+    .glitch-text::before,
+    .glitch-text::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .glitch-text::before {
+        color: #f0f;
+        transform: translate(-3px, 0);
+        animation: glitch-layer 0.3s infinite;
+    }
+
+    .glitch-text::after {
+        color: #0ff;
+        transform: translate(3px, 0);
+        animation: glitch-layer 0.45s infinite;
+    }
+
+    /* Scanline sweep */
+    .glitch-scan {
+        position: absolute;
+        top: -100%;
+        width: 100%;
+        height: 40%;
+        background: linear-gradient(
+            to bottom,
+            rgba(0,255,255,0) 0%,
+            rgba(0,255,255,0.15) 50%,
+            rgba(0,255,255,0) 100%
+        );
+        animation: scan-move 2.5s ease-in-out infinite;
+    }
+
+    /* Keyframes */
+    @keyframes glitch-anim {
+        0% { opacity: 1; }
+        20% { opacity: 0.6; transform: skew(1deg); }
+        40% { opacity: 1; transform: skew(-1deg); }
+        60% { opacity: 0.8; }
+        80% { opacity: 1; transform: skew(0deg); }
+        100% { opacity: 1; }
+    }
+
+    @keyframes glitch-layer {
+        0% { transform: translate(0); }
+        50% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
+    }
+
+    @keyframes scan-move {
+        0% { top: -100%; }
+        100% { top: 120%; }
+    }
+
+    /* Fade out intro screen */
+    @keyframes intro-fadeout {
+        0% { opacity: 1; visibility: visible; }
+        80% { opacity: 1; }
+        100% { opacity: 0; visibility: hidden; }
+    }
+</style>
+
+<script>
+    // Optional: Prevent scrolling until intro finishes
+    document.body.style.overflow = "hidden";
+    setTimeout(() => {
+        document.body.style.overflow = "auto";
+    }, 4500);
+</script>
+
+    <body>
+
+<style>
+    /* --- SPACIOUS LAYOUT UPGRADE --- */
+
+    body {
+        padding: 40px 0;
+    }
+
+    /* Header spacing */
+    header {
+        margin-bottom: 60px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin-bottom: 20px;
+    }
+
+    /* Main grid spacing */
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 40px; /* More space between sidebar + main */
+        padding: 40px 60px; /* More breathing room around the panels */
+    }
+
+    /* Glow panels spaced out */
+    .glow-panel {
+        padding: 30px 35px;
+        margin-bottom: 40px;
+        line-height: 1.7;
+    }
+
+    /* Navigation spacing */
+    nav {
+        margin: 80px 0 60px 0;
+        text-align: center;
+    }
+
+    nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px 40px; /* Horizontal + vertical spacing */
+        justify-content: center;
+        padding: 0;
+    }
+
+    nav li {
+        list-style: none;
+    }
+
+    .nav-btn {
+        padding: 14px 28px;
+        font-size: 20px;
+    }
+
+    /* Related section spacing */
+    main {
+        margin-top: 80px;
+        display: flex;
+        justify-content: center;
+    }
+
+    aside.glow-panel {
+        width: 300px;
+        padding: 30px;
+    }
+
+    /* Footer spacing */
+    footer {
+        margin-top: 100px;
+        padding: 20px 0;
+        text-align: center;
+    }
+</style>
+
+
+<header>
+    <h1 data-text="My Website">My Website</h1>
+</header>
+
+<article>
+    <div class="grid-container">
+        <div class="glow-panel sidebar">
+            This site is my digital hideout — a mix of stories, information, art, and games.
+        </div>
+
+        <div class="glow-panel main">
+            Welcome to this epic website! Click around and explore — there’s a lot hidden in here.
+            If you have any recommendations for what I can add, let me know!
+            My email and Pinterest are linked at the bottom of the page if you're interested. Thanks for visiting!
+        </div>
+    </div>
+</article>
+
+<nav>
+    <ul>
+        <li><a class="nav-btn" data-text="_Information_" href="Information.html" target="_blank">_Information_</a></li>
+        <li><a class="nav-btn" data-text="_About Me_" href="About Me.html" target="_blank">_About Me_</a></li>
+        <li><a class="nav-btn" data-text="_Stoner Shit_" href="Stoner Shit.html" target="_blank">_Stoner Shit_</a></li>
+        <li><a class="nav-btn" data-text="_Side Quests_" href="Side Quests.html" target="_blank">_Side Quests_</a></li>
+        <li><a class="nav-btn" data-text="_Tattoos_" href="Tattoos.html" target="_blank">_Tattoos_</a></li>
+        <li><a class="nav-btn" data-text="_Artwork_" href="Artwork.html" target="_blank">_Artwork_</a></li>
+        <li><a class="nav-btn" data-text="_Dungeon Game_" href="Dungeon Game Index.html" target="_blank">_Dungeon Game_</a></li>
+        <li><a class="nav-btn" data-text="_Mini Game 1_" href="Mini Game 1.html" target="_blank">_Mini Game 1_</a></li>
+        <li><a class="nav-btn" data-text="_Mini Game 2_" href="Mini Game 2.html" target="_blank">_Mini Game 2_</a></li>
+    </ul>
+</nav>
+
+<main>
+    <aside class="glow-panel">
+        <h2>Related</h2>
+        <ul>
+            <li><a href="Shows and Movies.html" target="_blank">Shows and Movies</a></li>
+            <li><a href="Music.html" target="_blank">Music</a></li>
+            <li><a href="https://pin.it/45K71i8Rl" target="_blank">My Pinterest</a></li>
+            <li><a href="mailto:wolfcatn@gmail.com">Email Me</a></li>
+        </ul>
+    </aside>
+</main>
+
+<footer>
+    <p>Copyright 2023 by Nigh Johnson.</p>
+</footer>
+
+</body>
+</html>
