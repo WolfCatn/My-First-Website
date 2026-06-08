@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shows and Movies</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: #050505;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #08f;
+            margin-bottom: 30px;
+        }
+
+        ul {
+            max-width: 700px;
+            margin: 0 auto 20px auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #b8faff;
+            text-shadow: 0 0 4px rgba(0, 255, 255, 0.25);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+        }
+
+        p {
+            max-width: 900px;
+            margin: 20px auto;
+            font-size: 18px;
+            background: rgba(0, 20, 40, 0.5);
+            padding: 20px;
+            border-left: 3px solid #00eaff;
+            border-right: 3px solid #ff00ff;
+            border-radius: 6px;
+            box-shadow: 0 0 12px #00eaff55;
+        }
+
+
+        /* Cyberpunk frame around iframes */
+        iframe {
+            border: 3px solid #0ff;
+            box-shadow: 
+                0 0 12px #0ff,
+                0 0 25px #0aa,
+                inset 0 0 10px #0ff;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Shows and Movies</h1>
+    <p>I don't tend to watch a lot of shows or movies, but I do have a few favorites. (In progress)</p>
+    <ul>
+        <li><strong>Shows:</strong>
+            <ul>
+                <li>Helluva Boss</li>
+                <li>Initial D</li>
+            </ul>
+        </li>
+        <li><strong>Movies:</strong>
+            <ul>
+                <li>Fight Club</li>
+                <li>John Wick (all four)</li>
+                <li>The Ballerina (from the same universe as John Wick)</li>
+                <li>The Ritual</li>
+            </ul>
+        </li>
+    </ul>
+</body>
+</html>

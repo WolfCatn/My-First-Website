@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music</title>
+
+    <style>
+        /* Cyberpunk Background */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle at top, #0a0f1f, #000);
+            color: #0ff;
+            margin: 0;
+            padding: 20px;
+            text-shadow: 0 0 6px #0ff;
+        }
+
+        /* Neon Header */
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #08f;
+            margin-bottom: 30px;
+        }
+
+        /* Neon Paragraphs */
+        p {
+            max-width: 700px;
+            margin: 0 auto 20px auto;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #b8faff;
+            text-shadow: 0 0 4px #0ff;
+        }
+
+        /* Holographic Form Panel */
+        form {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(0, 20, 40, 0.7);
+            border: 2px solid #0ff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px #0ff, inset 0 0 10px #08f;
+            backdrop-filter: blur(6px);
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+            color: #7dfcff;
+        }
+
+        input, textarea, select {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #0ff;
+            color: #0ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: inherit;
+            box-shadow: 0 0 8px #0ff;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 12px #0ff, 0 0 20px #08f;
+        }
+
+        /* Neon Button */
+        input[type="submit"] {
+            width: auto;
+            background: #0ff;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            text-shadow: none;
+        }
+
+        input[type="submit"]:hover {
+            background: #08f;
+            color: #fff;
+            box-shadow: 0 0 20px #08f;
+        }
+
+        #result {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(0, 10, 20, 0.7);
+            border: 2px solid #08f;
+            border-radius: 10px;
+            color: #aff;
+            box-shadow: 0 0 15px #08f;
+        }
+
+        /* Spotify Section */
+        .spotify-section {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(29, 185, 84, 0.1);
+            border: 2px solid #1DB954;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(29, 185, 84, 0.3);
+        }
+
+        .spotify-section h2 {
+            color: #1DB954;
+            text-shadow: 0 0 10px #1DB954;
+            margin-top: 0;
+        }
+
+        .spotify-btn {
+            display: inline-block;
+            background: #1DB954;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .spotify-btn:hover {
+            background: #1ed760;
+            box-shadow: 0 0 20px #1DB954;
+            transform: scale(1.05);
+        }
+
+        .spotify-embed {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <p>
+        I love music! It’s the main thing keeping me going in life — my escape from reality.
+    </p>
+    <p>
+        I listen to a wide variety of genres. Mostly alternative, punk, rock, rap, and metal… but honestly, it depends on the mood.
+    </p>
+
+    <h1>Music Form</h1>
+
+    <form id="sampleForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="favoriteGenre">Favorite Music Genre:</label>
+        <select id="favoriteGenre" name="favoriteGenre">
+            <option value="rock">Rock</option>
+            <option value="alternative">Alternative</option>
+            <option value="punk">Punk</option>
+            <option value="rap">Rap</option>
+            <option value="metal">Metal</option>
+            <option value="pop">Pop</option>
+            <option value="hiphop">Hip-Hop</option>
+            <option value="country">Country</option>
+            <option value="jazz">Jazz</option>
+            <option value="classical">Classical</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="comments">Comments:</label>
+        <textarea id="comments" name="comments" rows="4" cols="50"></textarea>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="result"></div>
+
+    <!-- Spotify Section -->
+    <div class="spotify-section">
+        <h2>🎵 Listen on Spotify 🎵</h2>
+        <p>Follow me on Spotify to see what I'm listening to:</p>
+        <a href="https://open.spotify.com/user/31ei2nppkjvfav4ghjyc2xcegxp4?si=92f76dad0ebd4133" target="_blank" class="spotify-btn">
+            Open Spotify Profile
+        </a>
+    </div>
+
+    <script>
+        document.getElementById('sampleForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const favoriteGenre = document.getElementById('favoriteGenre').value;
+            const comments = document.getElementById('comments').value;
+
+            document.getElementById('result').innerHTML = `
+                <h2 style="color:#0ff; text-shadow:0 0 10px #0ff;">Form Data Received:</h2>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Favorite Music Genre:</strong> ${favoriteGenre}</p>
+                <p><strong>Comments:</strong> ${comments}</p>
+            `;
+        });
+    </script>
+
+</body>
+</html>
